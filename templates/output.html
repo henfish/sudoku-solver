@@ -1,0 +1,115 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Output
+{% endblock %}
+
+{% block main %}
+    <script>
+        
+        function explain(n,m) {
+            
+            
+            var explanations = ( {{ explanations | tojson }} );
+            myElement = document.getElementById("expl");
+            myElement.classList.add("fade");
+            htmlText = "";
+            if (n != 10){
+                for (let i = 0; i < explanations[n][m].length; i++) {
+                    htmlText += "<li class =" + explanations[n][m][i][1] + ">" + explanations[n][m][i][0] + "</li>";
+                }
+                setTimeout(function(){
+                    myElement.classList.remove("fade");
+                    myElement.innerHTML = htmlText;}, 150);
+            }
+            else{
+                setTimeout(function(){
+                    myElement.classList.remove("fade");
+                    myElement.innerHTML = "";}, 150);
+            }
+            
+        }
+    </script>
+
+    <div class="jumbotron">
+        <h1>Sudoku Solver</h1>
+        <a class="btn btn-primary btn-lg" role="button" href="/">Input another sudoku</a>
+    </div>
+    
+    <div class="container">
+        <nav>
+            <ul class="pagination">
+                <li class="page-item {% if step == 0 %} disabled {% endif %}">
+                    <a class="page-link" href="output?step={{step-1}}">Previous</a>
+                </li>
+                {% for n in range (0, numsteps) %}
+                <li class="page-item {% if step == n %} active {% endif %}">
+                    <a class="page-link" href="output?step={{n}}">{{n+1}}</a>
+                </li>
+                {% endfor %}
+                <li class="page-item {% if step == numsteps %} active {% endif %}">
+                    <a class="page-link" href="output?step={{numsteps}}">Solution</a>
+                </li>
+                <li class="page-item {% if step == numsteps %} disabled {% endif %}" >
+                    <a class="page-link" href="output?step={{step+1}}">Next</a>
+                </li>
+            </ul>
+        </nav>
+        <table class="poss_table" onmouseleave="explain(10,)">
+                
+            <!--row-->
+            {% for n in range (0,9) %}
+                <tr>
+                    {% for m in range (0,9) %}
+                         <!--Check if a cell has only one possibility.-->
+                        {% if poss[n][m]|length == 1 %}
+                            <!--We will display that number with a certain color (by setting its class).
+                            We check if there is an explanation array for the cell (n,m). If so,
+                            color it in according to the second value in that explanations array.
+                            If not, color it white-->
+                            <td class="singlenumber 
+                                {% if explanations[n][m]|length > 0 %}
+                                    {{(explanations[n][m]|last)[1]}}
+                                {% else %}
+                                    w
+                                {% endif %}" 
+                                onmouseenter="explain({{n}},{{m}})">
+                            {{poss[n][m][0]}}
+                            </td>
+                        <!--If there are multiple possibiltiies, create a possibilities table inside the cell-->
+                        {% else %}
+                            <!-- we will display the table with a certain color (by setting its class).
+                            Check if there is an explanation array for the cell (n,m). If so,
+                            color it in according to the second value in that explanations array.
+                            If not, color it white-->
+                            <td class=
+                                "{% if explanations[n][m]|length > 0 %}
+                                    {{(explanations[n][m]|last)[1]}}
+                                {% else %}
+                                    w
+                                {% endif %}"
+                                onmouseenter="explain({{n}},{{m}})">
+                                <table class="poss_subtable">
+                                    <!--Display possibilities in a 9x9 table-->
+                                    {% for o in [1,4,7] %}
+                                        <tr>
+                                            {% for l in range (o,o+3) %}
+                                                {% if l in poss[n][m] %}
+                                                    <td>{{l}}</td>
+                                                {% else %}
+                                                    <td>&nbsp;</td>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </tr>
+                                    {% endfor %}
+                                </table>
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </table>
+        <ul id = "expl">
+        </ul>
+    </div>
+{% endblock %}
