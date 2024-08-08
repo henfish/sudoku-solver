@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+        <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+        <link type="text/css" href="/static/style.css" rel="stylesheet">
+        <title>Sudoku Solver</title>
+        
+    </head>
+    <body>
+        <div class="jumbotron">
+            <h1>Sudoku Solver</h1>
+        </div>
+        <div class="container">
+            
+            <form action="/" method="POST">
+               
+                
+                <table id="sudoku_table">
+                       
+                    <!--row-->
+                    {% for n in range (0,9) %}
+                    <tr class="row">
+                        {% for m in range (0,9) %}
+                        <td class="cell"><input name = "{{n}}{{m}}" type="text" maxlength="1"></td>
+                        {% endfor %}
+                    </tr>
+                    {% endfor %}
+                </table>
+
+                 <input type = "submit">
+        </form>
+
+                
+            
+        </div>
+    </body>
+</html>
